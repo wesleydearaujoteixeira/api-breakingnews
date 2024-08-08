@@ -1,16 +1,21 @@
 {
   "name": "api-breakingnews",
   "version": "1.0.0",
-  "description": "",
+  "description": "A breaking news API service",
   "main": "index.js",
   "scripts": {
-    "init": "node index",
-    "dev": "nodemon index"
+    "init": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "news",
+    "api",
+    "breaking-news"
+  ],
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "nodemon": "^3.1.4"
   }
