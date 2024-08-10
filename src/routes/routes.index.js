@@ -3,8 +3,7 @@ const controllers = require('../controllers/news');
 
 
 route.post('/create', controllers.Create);
-route.get('/get/:id', controllers.Get);
-
-
+route.get('/', controllers.FindAllUsers);
+route.get('/:id', controllers.FindUserById);
 
 module.exports = route;
