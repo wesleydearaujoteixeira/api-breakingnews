@@ -51,14 +51,7 @@ async function FindAllUsers(req, res) {
 async function FindUserById(req, res) {
 
     const userId = req.params.id;
-
-
-    if(!mongoose.Types.ObjectId.isValid(userId)) {
-
-        return res.status(400).json({ message: 'Invalid user ID' });
-
-    }
-
+    
 
     const user = await services.getUserById(userId);
 
@@ -72,4 +65,40 @@ async function FindUserById(req, res) {
 }
 
 
-module.exports = { Create, FindAllUsers, FindUserById};
+async function UpdateUser(req, res) {
+
+    const id = req.params.id;
+    
+    try {
+        const { name, username, email, password, avatar, background } = req.body;
+
+        // Verificar se pelo menos um campo é fornecido
+        if (!name && !username && !email && !password && !avatar && !background) {
+            return res.status(400).json({ message: 'Please provide at least one field to update' });
+        }
+
+
+        const updatedUser = await services.updateUser(
+            id,
+            name, 
+            username, 
+            email, 
+            password, 
+            avatar, 
+            background 
+        );
+        // Responder com o usuário atualizado
+        return res.status(200).json(
+            updatedUser,
+
+        );
+
+
+    } catch (error) {
+        console.log('Error updating user:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+module.exports = { Create, FindAllUsers, FindUserById, UpdateUser};

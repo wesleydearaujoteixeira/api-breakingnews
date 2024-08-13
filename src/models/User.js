@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = mongoose.Schema({
     name: {
@@ -17,7 +18,8 @@ const UserSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false,
     },
     avatar: {
         type: String,
@@ -27,6 +29,12 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     }
+});
+
+UserSchema.pre("save", async function (next) {
+    // Hnpm ash the password before saving it to the database
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
 });
 
 // Create a model based on the schema and export it
