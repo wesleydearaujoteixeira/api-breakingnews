@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const conectDB = () => {
-    mongoose.connect('mongodb+srv://wesleyaraujoteixeira98:hzZLYBjc3ImT1avD@cluster0.8puv5.mongodb.net/')
+    mongoose.connect(process.env.MONGO_ATLAS)
        .then(() => console.log('MongoDB Connected!'))
        .catch(err => console.log('Error connecting to MongoDB:', err));
 }
