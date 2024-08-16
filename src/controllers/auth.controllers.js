@@ -34,7 +34,9 @@ async function Login(req, res) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        const generateToken = jwt.sign({id: user.id}, process.env.KEY_TOKEN, {expiresIn: 86400});
+        const generateToken = jwt.sign({id: user.id}, process.env.KEY_TOKEN, {expiresIn: 86400}
+                  // Token expira em 24 horas ( segundos)
+        );
         // Senha é válida, responder com o objeto do usuário (omitir informações sensíveis)
             
         res.status(200)
