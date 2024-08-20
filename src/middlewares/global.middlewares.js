@@ -29,7 +29,19 @@ const validUser = async (req, res, next) => {
 
 }
 
+const validFields = async (req, res, next) => {
+
+    const { title, text, banner } = req.body;
+    
+    if(!title && !text && !banner) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    next();
+}
+
 module.exports = {
     validId,
-    validUser
+    validUser,
+    validFields
 }
