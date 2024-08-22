@@ -24,7 +24,7 @@ const updateUser = async (
         if (password) updateFields.password = password;
         if (avatar) updateFields.avatar = avatar;
         if (background) updateFields.background = background;
-
+        
         // Atualizar o documento e retornar o documento atualizado
         return await User.findOneAndUpdate(
             { _id: id }, 

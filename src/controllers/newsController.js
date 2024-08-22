@@ -298,7 +298,166 @@ const DeletePost = async (req, res) => {
     }
 }
 
+const likePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.userId;
+
+        // Validação dos parâmetros
+        if (!id || !userId) {
+            return res.status(400).json({ message: 'ID do post ou ID do usuário não fornecido.' });
+        }
+
+        // Verifica se o usuário já curtiu o post
+        const post = await Ndews.finOne({ _id: id, 'likes.userId': userId });
+
+        if (post) {
+            // Se o post já contém o userId, remove o like
+            const updatedPost = await News.findByIdAndUpdate(
+                id,
+                {
+                    $pull: { // Usa $pull para remover o like existente
+                        likes: { userId }
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+
+            if (!updatedPost) {
+                return res.status(404).json({ message: 'Post não encontrado.' });
+            }
+
+            return res.status(200).json({ message: 'Like removido com sucesso', news: updatedPost });
+        } else {
+            // Caso contrário, adiciona o novo like
+            const updatedPost = await News.findByIdAndUpdate(
+                id,
+                {
+                    $addToSet: { // Usa $addToSet para garantir que o like não seja duplicado
+                        likes: { userId, created: new Date() }
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+
+            if (!updatedPost) {
+                return res.status(404).json({ message: 'Post não encontrado.' });
+            }
+
+            return res.status(200).json({ message: 'Like adicionado com sucesso', news: updatedPost });
+        }
+    } catch (error) {
+        console.error('Ocorreu um erro interno:', error.message);
+        res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
+    }
+};
 
 
 
-module.exports = { Post, GetAllPosts, TopNews, GetInformation, Search, byUser, updateUser, DeletePost};
+const commentsPost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { text } = req.body; // Use 'text' para o corpo da requisição
+        const userId = req.userId;
+
+        // Validação dos parâmetros
+        if (!id || !text || !userId) {
+            return res.status(400).json({ message: 'ID do post, texto do comentário ou ID do usuário não fornecido.' });
+        }
+
+        // Gera um ID único para o comentário
+        const idComment = Math.floor(Math.random() * Date.now()).toString(36);
+
+        // Atualiza o post com o novo comentário
+        const updatedPost = await News.findOneAndUpdate(
+            { _id: id },
+            {
+                $push: {
+                    comments: {
+                        idComment,
+                        userId,
+                        text,
+                        createdAt: new Date() // Usa Date() para criar a data atual
+                    }
+                }
+            },
+            { new: true } // Retorna o documento atualizado
+        );
+
+        res.status(200).json({ message: "Post com o novo comentário", post: updatedPost})
+
+    } catch (err) {
+        console.error('Ocorreu um erro interno:', err.message);
+        res.status(500).json({ message: 'Erro interno do servidor:'+ err.message });
+    }
+
+}
+
+
+
+const deleteComment = async (req, res) => {
+    try {
+        const { id, idComment } = req.params;
+        const userId = req.userId;
+
+        // Validação dos parâmetros
+        if (!id || !idComment || !userId) {
+            return res.status(400).json({ message: 'ID do post, ID do comentário ou ID do usuário não fornecido.' });
+        }
+
+        // Remove espaços extras
+        const cleanedId = id.trim();
+        const cleanedIdComment = idComment.trim();
+        const cleanedUserId = userId.trim();
+
+        // Valida se os IDs são ObjectId válidos
+        if (!mongoose.Types.ObjectId.isValid(cleanedId)) {
+            return res.status(400).json({ message: 'ID do post inválido.' });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(cleanedIdComment)) {
+            return res.status(400).json({ message: 'ID do comentário inválido.' });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(cleanedUserId)) {
+            return res.status(400).json({ message: 'ID do usuário inválido.' });
+        }
+
+        // Remove o comentário específico do array de comentários do post
+        const updatedPost = await News.findOneAndUpdate(
+            { 
+                _id: cleanedId, 
+                'comments._id': cleanedIdComment, 
+                'comments.userId': cleanedUserId 
+            },
+            { 
+                $pull: { 
+                    comments: { 
+                        _id: cleanedIdComment
+                    } 
+                } 
+            },
+            { 
+                new: true, // Retorna o documento atualizado
+                useFindAndModify: false // Para evitar aviso de deprecated
+            }
+        );
+        
+        // Verifica se o documento foi encontrado e atualizado
+        if (!updatedPost) {
+            return res.status(404).json({ message: 'Post ou comentário não encontrado.' });
+        }
+
+        // Responde com o post atualizado e uma mensagem de sucesso
+        res.status(200).json({ message: 'Comentário deletado com sucesso.', post: updatedPost });
+
+    } catch (error) {
+        console.error('Ocorreu um erro interno:', error.message);
+        res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
+    }
+};
+
+
+
+
+module.exports = { Post, GetAllPosts, TopNews, GetInformation, Search, byUser, updateUser, DeletePost, likePost, commentsPost, deleteComment};

@@ -28,7 +28,7 @@ const UserSchema = mongoose.Schema({
     background: {
         type: String,
         required: true
-    }
+    }  
 });
 
 UserSchema.pre("save", async function (next) {
