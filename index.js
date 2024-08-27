@@ -23,6 +23,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`listening on port http://localhost:${PORT}/`);
+    console.log(`listening on port https://api-breakingnews-s97m.onrender.com`);
 });
 
