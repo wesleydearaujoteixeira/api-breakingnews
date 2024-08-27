@@ -1,0 +1,590 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Breaking News API",
+      "description": "API para gerenciar notícias e comentários e muito mais",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5000",
+        "description": "Local"
+      }
+    ],
+    "paths": {
+      "/users/create": {
+        "post": {
+          "summary": "Create a new user",
+          "description": "Route responsável por criar um novo usuário",
+          "tags": ["Users"],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "User": {
+                    "value": {
+                      "name": "Cacau Lima",
+                      "username": "cacode",
+                      "email": "clima@gmail.com",
+                      "password": "12345",
+                      "avatar": "https://i.imgur.com/Ry1cb5M.png",
+                      "background": "https://images.wallpapersden.com/image/download/triangle-8k-blue-pattern_bGZlbmiUmZqaraWkpJRmbmdlrWZlbWU.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/": {
+        "get": {
+          "summary": "Search all users",
+          "description": "Route responsável por buscar todos os usuários",
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "summary": "Search user by ID",
+          "description": "Route responsável por buscar um usuário pelo ID",
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "User ID",
+              "required": true
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "summary": "Update user by ID",
+          "description": "Route responsável por atualizar um usuário pelo ID",
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "User ID",
+              "required": true
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "User": {
+                    "value": {
+                      "name": "Thiago Lima"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/post/": {
+        "post": {
+          "summary": "Post a new news article",
+          "description": "Route responsável por criar uma nova notícia",
+          "tags": ["News"],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/News"
+                },
+                "examples": {
+                  "News": {
+                    "value": {
+                      "title": "Breaking News",
+                      "text": "This is a breaking news text.",
+                      "banner": "https://example.com/banner.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/News"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/getAll": {
+        "get": {
+          "summary": "Retrieve all news articles",
+          "description": "Route responsável por buscar todas as notícias",
+          "tags": ["News"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/News"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/top": {
+        "get": {
+          "summary": "Retrieve the top news post",
+          "description": "Route responsável por buscar a notícia mais popular",
+          "tags": ["News"],
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/News"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/search": {
+        "get": {
+          "summary": "Search posts by title",
+          "description": "Route responsável por buscar as notícias que correspondem ao título enviado via parâmetros de consulta",
+          "tags": ["News"],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "title",
+              "schema": {
+                "type": "string"
+              },
+              "required": true
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/News"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/byUser": {
+        "get": {
+          "summary": "Search posts by user ID",
+          "description": "Route responsável por buscar as notícias pelo ID do usuário",
+          "tags": ["News"],
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/News"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/news/{id}": {
+        "patch": {
+          "summary": "Update a news post",
+          "description": "Route responsável por atualizar uma notícia",
+          "tags": ["News"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Post ID",
+              "required": true
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/News"
+                },
+                "examples": {
+                  "News": {
+                    "value": {
+                      "title": "Updated Title",
+                      "text": "Updated text",
+                      "banner": "https://example.com/updated-banner.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/News"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete a news post",
+          "description": "Route responsável por deletar uma notícia",
+          "tags": ["News"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Post ID",
+              "required": true
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      },
+      "/news/comments/{id}": {
+        "patch": {
+          "summary": "Comment on a post",
+          "description": "Route responsável por comentar em uma notícia",
+          "tags": ["News"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Post ID",
+              "required": true
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                },
+                "examples": {
+                  "Comment": {
+                    "value": {
+                      "message": "Comentário legal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      },
+      "/news/comments/{id}/{idComment}": {
+        "patch": {
+          "summary": "Like a comment",
+          "description": "Route responsável por curtir um comentário",
+          "tags": ["News"],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Post ID",
+              "required": true
+            },
+            {
+              "in": "path",
+              "name": "idComment",
+              "schema": {
+                "type": "string"
+              },
+              "description": "Comment ID",
+              "required": true
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "avatar": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            }
+          },
+          "required": ["name", "username", "email", "password"]
+        },
+        "News": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "banner": {
+              "type": "string"
+            }
+          },
+          "required": ["title", "text", "banner"]
+        },
+        "Comment": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": ["message"]
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+  
