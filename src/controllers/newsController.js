@@ -1,6 +1,5 @@
 const News = require('../models/News');
 const mongoose = require('mongoose');
-const User = require('../models/User');
 
 const Post = async (req, res) => {
     const { title, text, banner } = req.body;
@@ -309,7 +308,7 @@ const likePost = async (req, res) => {
         }
 
         // Verifica se o usuário já curtiu o post
-        const post = await Ndews.finOne({ _id: id, 'likes.userId': userId });
+        const post = await News.findOne({ _id: id, 'likes.userId': userId });
 
         if (post) {
             // Se o post já contém o userId, remove o like
