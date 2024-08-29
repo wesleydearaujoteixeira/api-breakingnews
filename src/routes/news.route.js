@@ -6,7 +6,7 @@ const newsControler = require('../controllers/newsController');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 const { validFields } = require('../middlewares/global.middlewares');
 
-route.post('/post', authMiddleware,  newsControler.Post);
+route.post('/post/:id', authMiddleware, newsControler.Post);
 route.get('/getAll', newsControler.GetAllPosts);
 route.get('/top', newsControler.TopNews);
 route.get('/search', newsControler.Search);

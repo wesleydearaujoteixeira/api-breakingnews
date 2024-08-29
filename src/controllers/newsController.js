@@ -4,11 +4,20 @@ const mongoose = require('mongoose');
 const Post = async (req, res) => {
     const { title, text, banner } = req.body;
 
-    console.log(req.userId);
+    const { id } = req.params;
+
+
+    const user = await News.findById({_id: id});
+
+
 
     // Validação dos campos obrigatórios
     if (!title || !text || !banner) {
         return res.status(400).json({ message: 'Por favor, forneça todos os campos obrigatórios' });
+    }
+
+    if(!user) {
+        return res.status(404).json({ message: 'User not found' });
     }
 
     try {
@@ -17,7 +26,7 @@ const Post = async (req, res) => {
             title,
             text,
             banner,
-            user: req.userId // Use uma nova instância de ObjectId se necessário
+            user: new ObjectId(id)  // Use uma nova instância de ObjectId se necessário
         });
 
         // Responder com uma mensagem de sucesso e os detalhes do novo documento
@@ -314,16 +323,20 @@ const likePost = async (req, res) => {
         const post = await News.findOne({ _id: id, 'likes.userId': userId });
 
         if (post) {
-            // Se o post já contém o userId, remove o like
-            const updatedPost = await News.findByIdAndUpdate(
-                id,
+            const updatedPost = await News.findOneAndUpdate(
                 {
-                    $pull: { // Usa $pull para remover o like existente
-                        likes: { userId }
-                    }
+                  _id: id,
+                  "likes.userId": { $nin: [userId] },
                 },
-                { new: true } // Retorna o documento atualizado
-            );
+                {
+                  $push: {
+                    likes: { userId, created: new Date() },
+                  },
+                },
+                {
+                  rawResult: true,
+                }
+              );
 
             if (!updatedPost) {
                 return res.status(404).json({ message: 'Post não encontrado.' });
@@ -333,13 +346,16 @@ const likePost = async (req, res) => {
         } else {
             // Caso contrário, adiciona o novo like
             const updatedPost = await News.findByIdAndUpdate(
-                id,
-                {
-                    $addToSet: { // Usa $addToSet para garantir que o like não seja duplicado
-                        likes: { userId, created: new Date() }
+                    {
+                      _id: id,
+                    },
+                    {
+                      $pull: {
+                        likes: {
+                          userId: userId,
+                        },
+                      },
                     }
-                },
-                { new: true } // Retorna o documento atualizado
             );
 
             if (!updatedPost) {

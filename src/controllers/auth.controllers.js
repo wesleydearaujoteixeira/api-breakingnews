@@ -41,7 +41,7 @@ async function Login(req, res) {
             
         res.status(200)
         .json( { message: 'Login bem-sucedido', 
-        user: {email: user.email, token: generateToken}});
+        user: {email: user.email, token: generateToken, id: user.id}});
 
     } catch (error) {
         console.error("Ocorreu um erro:", error);
