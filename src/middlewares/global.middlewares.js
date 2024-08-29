@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const service = require('../services/user-service');
 
 const validId = (req, res, next) => {
-
-
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
