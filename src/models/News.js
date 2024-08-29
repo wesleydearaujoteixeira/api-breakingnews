@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define o esquema para likes
 const LikeSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +13,7 @@ const LikeSchema = new mongoose.Schema({
     }
 });
 
+// Define o esquema para comentários
 const CommentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +30,7 @@ const CommentSchema = new mongoose.Schema({
     }
 });
 
+// Define o esquema para notícias
 const NewSchema = mongoose.Schema(
     {
         title: {
@@ -61,7 +64,9 @@ const NewSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-// Adiciona um índice único para evitar duplicações de userId em likes
-NewSchema.index({ "likes.userId": 1 }, { unique: true });
+// Remova o índice único para evitar problemas
+
+NewSchema.index({ "likes.userId": 1 }, { unique: false });
+
 
 module.exports = mongoose.model('New', NewSchema);

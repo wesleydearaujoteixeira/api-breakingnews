@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Post = async (req, res) => {
     const { title, text, banner } = req.body;
 
+    console.log(req.userId);
+
     // Validação dos campos obrigatórios
     if (!title || !text || !banner) {
         return res.status(400).json({ message: 'Por favor, forneça todos os campos obrigatórios' });
@@ -22,8 +24,8 @@ const Post = async (req, res) => {
         res.status(201).json({ message: 'Notícia criada com sucesso', news: newNews });
 
     } catch (error) {
-        console.error("Erro ao criar notícia:", error);
-        res.status(500).json({ message: 'Erro interno do servidor' });
+        //console.error("Erro ao criar notícia:", error);
+        res.status(500).json({ message: 'Erro interno do servidor detalhes', error });
     }
 };
 
@@ -297,6 +299,7 @@ const DeletePost = async (req, res) => {
     }
 }
 
+
 const likePost = async (req, res) => {
     try {
         const { id } = req.params;
@@ -350,6 +353,7 @@ const likePost = async (req, res) => {
         res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
     }
 };
+
 
 
 
