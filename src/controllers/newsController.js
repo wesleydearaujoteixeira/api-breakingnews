@@ -40,11 +40,11 @@ const GetAllPosts = async (req, res) => {
     let {limit, offset} = req.query;
 
 
-    limit = parseInt(limit) || 5;
+    limit = parseInt(limit) || 8;
     offset = parseInt(offset) || 0;
 
     if(!limit) {
-        limit = 5;
+        limit = 8;
     }
     if(!offset) {
         offset = 0;
