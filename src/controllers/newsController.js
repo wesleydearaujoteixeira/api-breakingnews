@@ -1,5 +1,6 @@
 const News = require('../models/News');
 const mongoose = require('mongoose');
+const User = require('../models/User');
 
 const Post = async (req, res) => {
     const { title, text, banner } = req.body;
@@ -7,17 +8,10 @@ const Post = async (req, res) => {
     const { id } = req.params;
 
 
-    const user = await News.findById({_id: id});
-
-
 
     // Validação dos campos obrigatórios
     if (!title || !text || !banner) {
         return res.status(400).json({ message: 'Por favor, forneça todos os campos obrigatórios' });
-    }
-
-    if(!user) {
-        return res.status(404).json({ message: 'User not found' });
     }
 
     try {
