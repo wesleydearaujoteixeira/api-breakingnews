@@ -332,26 +332,26 @@ const likePost = async (req, res) => {
         if (alreadyLiked) {
             // Remove o like se já estiver presente
             const updatedPost = await News.findOneAndUpdate(
-                idNews,
+                { _id: idNews, 'likes.userId': idUser },  // Filtro deve ser um objeto
                 {
                     $pull: {
                         likes: { userId: idUser }
                     }
                 },
-                { new: true }
+                { new: true }  // Retorna o documento atualizado
             );
 
             return res.status(200).json({ message: 'Like removido com sucesso', news: updatedPost });
         } else {
             // Adiciona o like se não estiver presente
             const updatedPost = await News.findOneAndUpdate(
-                idNews,
+                { _id: idNews },  // Filtro deve ser um objeto
                 {
                     $push: {
                         likes: { userId: idUser, created: new Date() }
                     }
                 },
-                { new: true }
+                { new: true }  // Retorna o documento atualizado
             );
 
             return res.status(200).json({ message: 'Like adicionado com sucesso', news: updatedPost });
@@ -361,6 +361,7 @@ const likePost = async (req, res) => {
         res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
     }
 };
+
 
 
 
