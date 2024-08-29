@@ -1,5 +1,7 @@
 const News = require('../models/News');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb'); // Certifique-se de que você está importando ObjectId corretamente
+
 const User = require('../models/User');
 
 const Post = async (req, res) => {
@@ -305,56 +307,52 @@ const DeletePost = async (req, res) => {
 
 const likePost = async (req, res) => {
     try {
-        const { id } = req.params;
-        const userId = req.userId;
+        const { idNews, idUser } = req.params;  // Recebe os parâmetros da rota
 
         // Validação dos parâmetros
-        if (!id || !userId) {
+        if (!idNews || !idUser) {
             return res.status(400).json({ message: 'ID do post ou ID do usuário não fornecido.' });
         }
 
+        // Verifica se o usuário existe
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        // Verifica se o post existe
+        const post = await News.findById(idNews);
+        if (!post) {
+            return res.status(404).json({ message: 'Post não encontrado.' });
+        }
+
         // Verifica se o usuário já curtiu o post
-        const post = await News.findOne({ _id: id, 'likes.userId': userId });
+        const alreadyLiked = post.likes.some(like => like.userId.toString() === idUser.toString());
 
-        if (post) {
+        if (alreadyLiked) {
+            // Remove o like se já estiver presente
             const updatedPost = await News.findOneAndUpdate(
+                idNews,
                 {
-                  _id: id,
-                  "likes.userId": { $nin: [userId] },
+                    $pull: {
+                        likes: { userId: idUser }
+                    }
                 },
-                {
-                  $push: {
-                    likes: { userId, created: new Date() },
-                  },
-                },
-                {
-                  rawResult: true,
-                }
-              );
-
-            if (!updatedPost) {
-                return res.status(404).json({ message: 'Post não encontrado.' });
-            }
+                { new: true }
+            );
 
             return res.status(200).json({ message: 'Like removido com sucesso', news: updatedPost });
         } else {
-            // Caso contrário, adiciona o novo like
-            const updatedPost = await News.findByIdAndUpdate(
-                    {
-                      _id: id,
-                    },
-                    {
-                      $pull: {
-                        likes: {
-                          userId: userId,
-                        },
-                      },
+            // Adiciona o like se não estiver presente
+            const updatedPost = await News.findOneAndUpdate(
+                idNews,
+                {
+                    $push: {
+                        likes: { userId: idUser, created: new Date() }
                     }
+                },
+                { new: true }
             );
-
-            if (!updatedPost) {
-                return res.status(404).json({ message: 'Post não encontrado.' });
-            }
 
             return res.status(200).json({ message: 'Like adicionado com sucesso', news: updatedPost });
         }
@@ -363,6 +361,7 @@ const likePost = async (req, res) => {
         res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
     }
 };
+
 
 
 
