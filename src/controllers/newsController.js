@@ -257,11 +257,7 @@ const updateUser = async (req, res) => {
         if (!news) {
             return res.status(404).json({ message: 'Notícia não encontrada' });
         }
-
-        // Garante que o usuário está autorizado a atualizar este item de notícia
-        if (news.user._id !== req.userId) {
-            return res.status(403).json({ message: 'Acesso negado' });
-        }
+     
 
         // Atualiza o item de notícia
         const updatedNews = await News.findByIdAndUpdate(
