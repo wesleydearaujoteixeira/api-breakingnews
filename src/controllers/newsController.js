@@ -241,37 +241,42 @@ const byUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-
-
-
     try {
         const { id } = req.params;
         const { title, text, banner } = req.body;
 
-        // Find the news item to ensure it exists and is associated with the user
+        // Valida se o ID é um ObjectId válido
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'ID inválido' });
+        }
+
+        // Encontra o item de notícia para garantir que ele existe e está associado ao usuário
         const news = await News.findById(id);
 
-        // Check if the news item exists
+        // Verifica se a notícia existe
         if (!news) {
             return res.status(404).json({ message: 'Notícia não encontrada' });
         }
 
-        // Ensure the user is authorized to update this news item
+        // Garante que o usuário está autorizado a atualizar este item de notícia
         if (news.user._id.toString() !== req.userId.toString()) {
             return res.status(403).json({ message: 'Acesso negado' });
         }
 
-        // Update the news item
-        const updatedNews = await News.findByIdAndUpdate(id, { title, text, banner }, { new: true });
+        // Atualiza o item de notícia
+        const updatedNews = await News.findByIdAndUpdate(
+            id,
+            { title, text, banner },
+            { new: true, runValidators: true } // runValidators garante que as validações do modelo sejam aplicadas
+        ).populate('user'); // Popula as informações do usuário se necessário
 
-        // Populate the user information for the updated news
+        // Retorna a notícia atualizada
         res.status(200).json({ message: 'Notícia atualizada com sucesso', news: updatedNews });
     } catch (error) {
         console.error("Ocorreu um erro interno", error.message);
         res.status(500).json({ message: 'Erro interno do servidor: ' + error.message });
-    
     }
-}
+};
 
 
 const DeletePost = async (req, res) => {
