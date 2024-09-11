@@ -259,7 +259,7 @@ const updateUser = async (req, res) => {
         }
 
         // Garante que o usuário está autorizado a atualizar este item de notícia
-        if (news.user._id.toString() !== req.userId.toString()) {
+        if (news.user._id.toString() !== req.userId) {
             return res.status(403).json({ message: 'Acesso negado' });
         }
 
