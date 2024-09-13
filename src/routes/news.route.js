@@ -20,6 +20,6 @@ route.patch('/likes/:idNews/:idUser', authMiddleware, newsControler.likePost);
 
 
 route.patch('/comments/:id', authMiddleware, newsControler.commentsPost);
-route.patch('/comments/:id/:idComment', authMiddleware, newsControler.deleteComment);
+route.patch('/comments/:id/:idComment/:idUser', authMiddleware, newsControler.deleteComment);
 
 module.exports = route;
