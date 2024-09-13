@@ -411,8 +411,13 @@ const commentsPost = async (req, res) => {
 
 const deleteComment = async (req, res) => {
     try {
-        const { id, idComment } = req.params;
+        const { id, idComment, idUser } = req.params;
         const userId = req.userId;
+
+        if(idUser != userId) {
+            return res.status(403).json({ message: 'Você não pode deletar o comentário que não é seu. ' });
+        }
+
 
         // Validação dos parâmetros
         if (!id || !idComment || !userId) {
